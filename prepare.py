@@ -11,8 +11,6 @@ import matplotlib.pyplot as plt
 from pydataset import data
 import warnings
 warnings.filterwarnings("ignore")
-from sklearn.model_selection import train_test_split
-
 
 import acquire as acq
 
@@ -68,12 +66,14 @@ def plot_hist_subplots(df):
     # Display the plot.
     plt.show()
     
-def prep_rrd_data(df):
+def prep_rrd_data():
+    '''pulls clean data, drops rows, converts datetime, maps codes to respective strings, encodes and makes dummy columns'''
+    
+    # pull clean data
+    df = acq.clean_rrd()
+    
     # Drop the specified columns
     df = df.drop(['railroad', 'carshzd', 'station', 'trkclas', 'typtrk', 'highspd', 'accdmg', 'totinj', 'totkld', 'county', 'stcnty', 'jointcd', 'region', 'year4', 'narr1', 'narr2', 'narr3', 'latitude', 'longitud'], axis=1)
-
-    # Save the modified dataframe to a new csv file
-    df.to_csv('RRD_US_combined_cleaned_reduced.csv', index=False)
     
     # Convert the 'year' column to a 4-digit year
     df['year'] = '20' + df['year'].astype(str)
@@ -90,12 +90,152 @@ def prep_rrd_data(df):
     # Drop the 'year', 'month', and 'day' columns
     df = df.drop(['year', 'month', 'day'], axis=1)
     
-    # Encode the 'cause' column
-    df['cause'] = (df['cause'] == 'H').astype(int)
+   # Define a dictionary to map type codes to accident types
+    type_map = {
+        1: 'Derailment',
+        2: 'Collision',
+        3: 'Fire/explosion',
+        4: 'Other',
+        5: 'Unknown',
+        6: 'Level crossing',
+        7: 'Trespasser',
+        8: 'Employee fatality',
+        9: 'Grade crossing accident',
+        10: 'Equipment derailment',
+        11: 'Non-train accident',
+        12: 'Hazardous material release'
+    }
+
+    # Replace the type codes with accident types
+    df['type'] = df['type'].map(type_map)
+    
+    # Define a dictionary to map state codes to state names
+    state_map = {
+        1: 'Alabama',
+        2: 'Alaska',
+        3: 'Arizona',
+        4: 'Arkansas',
+        5: 'California',
+        6: 'Colorado',
+        7: 'Connecticut',
+        8: 'Delaware',
+        9: 'District of Columbia',
+        10: 'Florida',
+        11: 'Georgia',
+        12: 'Hawaii',
+        13: 'Idaho',
+        14: 'Illinois',
+        15: 'Indiana',
+        16: 'Iowa',
+        17: 'Kansas',
+        18: 'Kentucky',
+        19: 'Louisiana',
+        20: 'Maine',
+        21: 'Maryland',
+        22: 'Massachusetts',
+        23: 'Michigan',
+        24: 'Minnesota',
+        25: 'Mississippi',
+        26: 'Missouri',
+        27: 'Montana',
+        28: 'Nebraska',
+        29: 'Nevada',
+        30: 'New Hampshire',
+        31: 'New Jersey',
+        32: 'New Mexico',
+        33: 'New York',
+        34: 'North Carolina',
+        35: 'North Dakota',
+        36: 'Ohio',
+        37: 'Oklahoma',
+        38: 'Oregon',
+        39: 'Pennsylvania',
+        40: 'Rhode Island',
+        41: 'South Carolina',
+        42: 'South Dakota',
+        43: 'Tennessee',
+        44: 'Texas',
+        45: 'Utah',
+        46: 'Vermont',
+        47: 'Virginia',
+        48: 'Washington',
+        49: 'West Virginia',
+        50: 'Wisconsin',
+        51: 'Wyoming',
+        52: 'Puerto Rico',
+        53: 'Virgin Islands',
+        54: 'Guam'
+    }
+
+    # Replace the state codes with state names
+    df['state'] = df['state'].map(state_map)
+    
+    # Define a dictionary to map visibility codes to visibility conditions
+    visibility_map = {
+        1: '<=1/4 mile',
+        2: '>1/4 mile and <=1/2 mile',
+        3: '>1/2 mile and <=1 mile',
+        4: '>1 mile and <=2 miles'
+    }
+
+    # Replace the visibility codes with visibility conditions
+    df['visiblty'] = df['visiblty'].replace(visibility_map)
+    
+    # Define a dictionary to map weather codes to weather conditions
+    weather_map = {
+        1: 'Clear/PC',
+        2: 'Rain',
+        3: 'Snow/Hail',
+        4: 'Fog/Smoke',
+        5: 'Crosswinds',
+        6: 'Blowing Dirt'
+    }
+
+    # Replace the weather codes with weather conditions
+    df['weather'] = df['weather'].map(weather_map)
+    
+    # Define a dictionary with the mapping of numbers to maximum allowable speed limit strings
+    acc_track_class = {
+        1: 'Max spd 10mph or less',
+        2: 'Max spd 10-20mph',
+        3: 'Max spd 20-25mph',
+        4: 'Max spd 25-40mph',
+        5: 'Max spd 40-60mph',
+        6: 'Max spd 60mph or more'
+    }
+
+    # Use the map() function to replace the numbers with their respective maximum allowable speed limit strings
+    df['acctrkcl'] = df['acctrkcl'].map(acc_track_class)
+    
+    # Define a dictionary with the mapping of numbers to meanings
+    acc_track = {
+        1: 'Owned by Carrier',
+        2: 'Leased Another Railroad',
+        3: 'Jointly Owned',
+        4: 'Trackage Rights Only'
+    }
+    # Use the map() function to replace the numbers with their respective meanings
+    df['acctrk'] = df['acctrk'].map(acc_track)
+    
+    # Replace 'H' with 'Human' and everything else with 'Other'
+    df['cause'] = df['cause'].apply(lambda x: 'Human' if x == 'H' else 'Other')
+    
+    # Encode and make dummy columns
+    dummy_df = pd.get_dummies(df[['visiblty', 
+                             'weather',
+                             'acctrkcl',
+                             'acctrk']],
+                              drop_first=True)
+    df = pd.concat([df, dummy_df], axis=1)
+
+    df = df.rename(columns=str.lower)
+    
+    # Save the modified dataframe to a new csv file
+    df.to_csv('RRD_US_combined_cleaned_reduced.csv', index=False)
     
     return df
 
-def split_data(df, train_size=0.7, val_size=0.15, test_size=0.15, random_state=None):
+def split_data(df, train_size=0.7, val_size=0.15, test_size=0.15, random_state=123):
     """
     Splits a DataFrame into train, validation, and test sets.
     
@@ -120,3 +260,41 @@ def split_data(df, train_size=0.7, val_size=0.15, test_size=0.15, random_state=N
     return train_df, val_df, test_df
 
 
+def get_X_train_val_test(train, validate, test, x_target, y_target):
+    '''
+    geting the X's and y's and returns them
+    '''
+    X_train = train.drop(columns = x_target)
+    X_validate = validate.drop(columns = x_target)
+    X_test = test.drop(columns = x_target)
+    y_train = train[y_target]
+    y_validate = validate[y_target]
+    y_test = test[y_target]
+    return X_train, X_validate, X_test, y_train, y_validate, y_test
+
+def scaler_robust(X_train, X_validate, X_test):
+    '''
+    takes train, test, and validate data and uses the RobustScaler on it
+    '''
+    scaler = RobustScaler()
+    return scaler.fit_transform(X_train), scaler.transform(X_validate), scaler.transform(X_test)
+
+
+def scaled_data_to_dataframe(X_train, X_validate, X_test):
+    '''
+    This function scales the data and returns it as a pandas dataframe
+    '''
+    X_train_columns = X_train.columns
+    X_validate_columns = X_validate.columns
+    X_test_columns = X_test.columns
+    X_train_numbers, X_validade_numbers, X_test_numbers = scaler_robust(X_train, X_validate, X_test)
+    X_train_scaled = pd.DataFrame(columns = X_train_columns)
+    for i in range(int(X_train_numbers.shape[0])):
+        X_train_scaled.loc[len(X_train_scaled.index)] = X_train_numbers[i]
+    X_validate_scaled = pd.DataFrame(columns = X_validate_columns)
+    for i in range(int(X_validade_numbers.shape[0])):
+        X_validate_scaled.loc[len(X_validate_scaled.index)] = X_validade_numbers[i]
+    X_test_scaled = pd.DataFrame(columns = X_test_columns)
+    for i in range(int(X_test_numbers.shape[0])):
+        X_test_scaled.loc[len(X_test_scaled.index)] = X_test_numbers[i]
+    return X_train_scaled, X_validate_scaled, X_test_scaled
