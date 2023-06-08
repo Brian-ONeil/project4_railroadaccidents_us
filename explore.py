@@ -146,49 +146,160 @@ def DTC_model(X_train_scaled, y_train, X_val_scaled, y_val, X_test_scaled, y_tes
     # Print the accuracy of the model on the training and validation data
     print('Training Accuracy:', train_accuracy)
     print('Validation Accuracy:', val_accuracy)
-    
-    
 
 def RF_model(X_train_scaled, y_train, X_val_scaled, y_val, X_test_scaled, y_test):
     '''send in scaled train then run RF model'''
-
     # Create a random forest model
     rf = RandomForestClassifier()
-    ​
+    
     # Define the hyperparameters to search
     params = {'n_estimators': [50, 100, 150, 200],
               'max_depth': [2, 4, 6, 8, 10],
               'min_samples_split': [2, 4, 6, 8, 10],
               'min_samples_leaf': [1, 2, 3, 4, 5]}
-    ​
+    
     # Create a grid search object
     grid_search = GridSearchCV(rf, params, cv=5)
-    ​
+    
     # Fit the grid search object on the training data
     grid_search.fit(X_train_scaled, y_train)
-    ​
+    
     # Get the best hyperparameters
     best_params = grid_search.best_params_
-    ​
+    
     # Create a random forest model with the best hyperparameters
     rf = RandomForestClassifier(n_estimators=best_params['n_estimators'],
                                 max_depth=best_params['max_depth'],
                                 min_samples_split=best_params['min_samples_split'],
                                 min_samples_leaf=best_params['min_samples_leaf'])
-    ​
+    
     # Fit the model on the training data
     rf.fit(X_train_scaled, y_train)
-    ​
+    
     # Predict the target variable for the training and validation data
     y_train_pred = rf.predict(X_train_scaled)
     y_val_pred = rf.predict(X_val_scaled)
-    ​
+    
     # Calculate the accuracy of the model on the training and validation data
     train_accuracy = accuracy_score(y_train, y_train_pred)
     val_accuracy = accuracy_score(y_val, y_val_pred)
-    ​
+    
     # Print the accuracy of the model on the training and validation data
     print('Training Accuracy:', train_accuracy)
     print('Validation Accuracy:', val_accuracy)
     
+def lr_model(X_train_scaled, y_train, X_val_scaled, y_val, X_test_scaled, y_test):
+    '''send in scaled train then run lr model'''
+    # Create a logistic regression model
+    lr = LogisticRegression()
+
+    # Define the hyperparameters to search
+    params = {'C': [0.1, 1, 10, 100],
+              'penalty': ['l1', 'l2']}
+
+    # Create a grid search object
+    grid_search = GridSearchCV(lr, params, cv=5)
+
+    # Fit the grid search object on the training data
+    grid_search.fit(X_train_scaled, y_train)
+
+    # Get the best hyperparameters
+    best_params = grid_search.best_params_
+
+    # Create a logistic regression model with the best hyperparameters
+    lr = LogisticRegression(C=best_params['C'],
+                            penalty=best_params['penalty'])
+
+    # Fit the model on the training data
+    lr.fit(X_train_scaled, y_train)
+
+    # Predict the target variable for the training and validation data
+    y_train_pred = lr.predict(X_train_scaled)
+    y_val_pred = lr.predict(X_val_scaled)
+
+    # Calculate the accuracy of the model on the training and validation data
+    train_accuracy = accuracy_score(y_train, y_train_pred)
+    val_accuracy = accuracy_score(y_val, y_val_pred)
+
+    # Print the accuracy of the model on the training and validation data
+    print('Training Accuracy:', train_accuracy)
+    print('Validation Accuracy:', val_accuracy)
+    
+def knn_model(X_train_scaled, y_train, X_val_scaled, y_val, X_test_scaled, y_test):
+    '''send in scaled train then run knn model'''
+    
+    # Create a KNN model
+    knn = KNeighborsClassifier()
+
+    # Define the hyperparameters to search
+    params = {'n_neighbors': [3, 5, 7, 9],
+              'weights': ['uniform', 'distance'],
+              'p': [1, 2]}
+
+    # Create a grid search object
+    grid_search = GridSearchCV(knn, params, cv=5)
+
+    # Fit the grid search object on the training data
+    grid_search.fit(X_train_scaled, y_train)
+
+    # Get the best hyperparameters
+    best_params = grid_search.best_params_
+
+    # Create a KNN model with the best hyperparameters
+    knn = KNeighborsClassifier(n_neighbors=best_params['n_neighbors'],
+                               weights=best_params['weights'],
+                               p=best_params['p'])
+
+    # Fit the model on the training data
+    knn.fit(X_train_scaled, y_train)
+
+    # Predict the target variable for the training and validation data
+    y_train_pred = knn.predict(X_train_scaled)
+    y_val_pred = knn.predict(X_val_scaled)
+
+    # Calculate the accuracy of the model on the training and validation data
+    train_accuracy = accuracy_score(y_train, y_train_pred)
+    val_accuracy = accuracy_score(y_val, y_val_pred)
+
+    # Print the accuracy of the model on the training and validation data
+    print('Training Accuracy:', train_accuracy)
+    print('Validation Accuracy:', val_accuracy)
+
+def rf_test_model(X_train_scaled, y_train, X_val_scaled, y_val, X_test_scaled, y_test): 
+    '''takes in test-scaled and gives rf accuracy score'''
+    # Create a random forest model
+    rf = RandomForestClassifier()
+
+    # Define the hyperparameters to search
+    params = {'n_estimators': [50, 100, 150, 200],
+              'max_depth': [2, 4, 6, 8, 10],
+              'min_samples_split': [2, 4, 6, 8, 10],
+              'min_samples_leaf': [1, 2, 3, 4, 5]}
+
+    # Create a grid search object
+    grid_search = GridSearchCV(rf, params, cv=5)
+
+    # Fit the grid search object on the training data
+    grid_search.fit(X_train_scaled, y_train)
+
+    # Get the best hyperparameters
+    best_params = grid_search.best_params_
+
+    # Create a random forest model with the best hyperparameters
+    rf = RandomForestClassifier(n_estimators=best_params['n_estimators'],
+                                max_depth=best_params['max_depth'],
+                                min_samples_split=best_params['min_samples_split'],
+                                min_samples_leaf=best_params['min_samples_leaf'])
+
+    # Fit the model on the training data
+    rf.fit(X_train_scaled, y_train)
+
+    # Predict the target variable for the training, validation, and test data
+    y_test_pred = rf.predict(X_test_scaled)
+
+    # Calculate the accuracy of the model on the training, validation, and test data
+    test_accuracy = accuracy_score(y_test, y_test_pred)
+    
+    # Print the accuracy of the model on the training, validation, and test data
+    print('Test Accuracy:', test_accuracy)
     

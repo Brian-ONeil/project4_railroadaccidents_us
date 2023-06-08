@@ -75,14 +75,14 @@
 
 ## Takeaways and Conclusions
 * Exploration: 
-    * The statistical modeling showed some relationships with weather and visibility when compared to a subpopulation of human factor caused accidents.
+    * The statistical modeling showed some relationships with weather and visibility when compared to a subpopulation of human factor caused accidents. 
     * Both p-values for weather and visibility proved a relationship to the human factor cause when compared to against all other cause categories.
-    * However, statistical modeling when comparing the means of conductor hours with human factor causes and conductor hours with other accident causes did not show any significance.
-    * The same results when comparieng means of train speed with human factor caused accidents and other accidents.
-    * Only weather and visibility were sent forward for modeling.
+    * Statistical modeling when comparing the means of conductor hours with human factor causes and conductor hours with other accident causes did did show significance.
+    * We also found significance when comparing means of train speed with human factor caused accidents and other accidents.
+    * Weather, visibility, conductor hours, train speed were sent forward for modeling.
 * Modeling:
-    * The final Decision Tree Model on the test data set decreased accuracy below the baseline of 58.9%.
-    * There is only about a 2% difference between the worst model on any dataset, the baseline, and the best model. Therefore it is my opinion there needs to be more viable features added to the models to find any worthy prediction accuracy.
+    * The final Random Forest Model on the test data set decreased accuracy, but beat the baseline by almost 3%.
+    * It is my opinion there needs to be more viable features added to the models to find any worthy prediction accuracy.
 
 ## Recommendations
 * The Federal Railroad Administration should consider revamping their accident report forms and policy to include more questions that affect human and job performance on their operators such as:
