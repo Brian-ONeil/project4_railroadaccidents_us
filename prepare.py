@@ -298,3 +298,50 @@ def scaled_data_to_dataframe(X_train, X_validate, X_test):
     for i in range(int(X_test_numbers.shape[0])):
         X_test_scaled.loc[len(X_test_scaled.index)] = X_test_numbers[i]
     return X_train_scaled, X_validate_scaled, X_test_scaled
+
+def X_train_data(train, val, test):
+    # create X & y version of train/validate/test
+    # where X contains the features we want to use and y is a series with just the target variable
+
+    # Define the columns we want to use as features
+    features = ['visiblty_>1 mile and <=2 miles', 
+                'visiblty_>1/2 mile and <=1 mile', 
+                'visiblty_>1/4 mile and <=1/2 mile', 
+                'weather_clear/pc', 'weather_crosswinds', 
+                'weather_fog/smoke', 'weather_rain', 
+                'weather_snow/hail', 'trnspd', 'cdtrhr']
+
+    # Create X and y datasets for the train set
+    X_train = train[features]
+    y_train = train['cause']
+
+    # Create X and y datasets for the validate set
+    X_val = val[features]
+    y_val = val['cause']
+
+    # Create X and y datasets for the test set
+    X_test = test[features]
+    y_test = test['cause']
+    
+    return X_train, X_val, X_test, y_train, y_val, y_test
+
+def scaled_data(X_train, X_val, X_test, y_train, y_val, y_test):
+   
+    # Create a MinMaxScaler object
+    scaler = MinMaxScaler()
+
+    # Fit the scaler to the training data
+    scaler.fit(X_train)
+
+    # Scale the training data
+    X_train_scaled = scaler.transform(X_train)
+
+    # Scale the validation data
+    X_val_scaled = scaler.transform(X_val)
+
+    # Scale the test data
+    X_test_scaled = scaler.transform(X_test)
+
+    # Return the scaled datasets
+    return X_train_scaled, y_train, X_val_scaled, y_val, X_test_scaled, y_test
+
