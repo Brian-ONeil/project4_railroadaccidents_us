@@ -77,9 +77,9 @@
 * Exploration: 
     * The statistical modeling showed some relationships with weather and visibility when compared to a subpopulation of human factor caused accidents. 
     * Both p-values for weather and visibility proved a relationship to the human factor cause when compared to against all other cause categories.
-    * Statistical modeling when comparing the means of conductor hours with human factor causes and conductor hours with other accident causes did did show significance.
+    * Statistical modeling when comparing the means of conductor hours with human factor causes and conductor hours with other accident causes did show significance.
     * We also found significance when comparing means of train speed with human factor caused accidents and other accidents.
-    * Weather, visibility, conductor hours, train speed were sent forward for modeling.
+    * Weather, visibility, conductor hours, and train speed were sent forward for modeling.
 * Modeling:
     * The final Random Forest Model on the test data set decreased accuracy, but beat the baseline by almost 3%.
     * It is my opinion there needs to be more viable features added to the models to find any worthy prediction accuracy.
