@@ -71,7 +71,7 @@
 1) Clone the repo: git@github.com:Brian-ONeil/project4_railroadaccidents_us.git in terminal
 2) All data is already loaded in .csv format in the directory
 2) Using random state 123 
-3) Run final notebook
+3) Run final_report notebook
 
 ## Takeaways and Conclusions
 * Exploration: 
